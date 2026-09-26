@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: react-calculator-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: FRONTEND_URL
+        value: https://soma-sekhar-reddy.github.io/react-calculator

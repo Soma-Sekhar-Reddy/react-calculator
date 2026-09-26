@@ -6,31 +6,47 @@ function App() {
   const [firstNumber, setFirstNumber] = useState('')
   const [secondNumber, setSecondNumber] = useState('')
   const [result, setResult] = useState(null)
+  const [status, setStatus] = useState('ready')
+   const apiBaseUrl = import.meta.env.VITE_API_URL || ''
 
-  const calculate = (operation) => {
+  const calculate = async (operation) => {
     const first = Number(firstNumber)
     const second = Number(secondNumber)
     if (firstNumber === '' || secondNumber === '' || !Number.isFinite(first) || !Number.isFinite(second)) {
       setResult('Enter two valid numbers')
+      setStatus('error')
       return
     }
-    const value = operation === 'add' ? first + second : first - second
-    const symbol = operation === 'add' ? '+' : '−'
-    const calculation = { expression: `${firstNumber} ${symbol} ${secondNumber}`, result: formatNumber(value) }
-    setResult(calculation.result)
+
+    setStatus('calculating')
+    try {
+        const response = await fetch(`${apiBaseUrl}/api/calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first, second, operation }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Calculation failed')
+      setResult(formatNumber(data.result))
+      setStatus('calculated')
+    } catch (error) {
+      setResult(error.message)
+      setStatus('error')
+    }
   }
 
   const clear = () => {
     setFirstNumber('')
     setSecondNumber('')
     setResult(null)
+    setStatus('ready')
   }
 
   return (
     <main className="app-shell">
       <section className="calculator" aria-label="Add or subtract two numbers">
         <div className="display-panel">
-          <div className="display-meta"><span>two number mode</span><span>{result === null ? 'ready' : 'calculated'}</span></div>
+          <div className="display-meta"><span>Node.js API</span><span>{status}</span></div>
           <div className="display" aria-live="polite">{result ?? '—'}</div>
         </div>
         <div className="number-fields">
@@ -38,8 +54,8 @@ function App() {
           <label>Second number<input type="number" value={secondNumber} onChange={(event) => setSecondNumber(event.target.value)} placeholder="0" /></label>
         </div>
         <div className="action-row">
-          <button className="operator" onClick={() => calculate('add')}>Add <span>+</span></button>
-          <button className="equals" onClick={() => calculate('subtract')}>Subtract <span>−</span></button>
+          <button className="operator" disabled={status === 'calculating'} onClick={() => calculate('add')}>Add <span>+</span></button>
+          <button className="equals" disabled={status === 'calculating'} onClick={() => calculate('subtract')}>Subtract <span>−</span></button>
         </div>
         <button className="clear-button" onClick={clear}>Clear inputs</button>
       </section>
