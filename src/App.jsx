@@ -45,13 +45,14 @@ function App() {
   return (
     <main className="app-shell">
       <section className="calculator" aria-label="Add or subtract two numbers">
+        <h1 className="calculator-title">React API Calculator</h1>
         <div className="display-panel">
           <div className="display-meta"><span>Node.js API</span><span>{status}</span></div>
           <div className="display" aria-live="polite">{result ?? '—'}</div>
         </div>
         <div className="number-fields">
-          <label>First number<input type="number" value={firstNumber} onChange={(event) => setFirstNumber(event.target.value)} placeholder="0" /></label>
-          <label>Second number<input type="number" value={secondNumber} onChange={(event) => setSecondNumber(event.target.value)} placeholder="0" /></label>
+          <label>First Number<input type="number" value={firstNumber} onChange={(event) => setFirstNumber(event.target.value)} placeholder="Enter first number" /></label>
+          <label>Second Number<input type="number" value={secondNumber} onChange={(event) => setSecondNumber(event.target.value)} placeholder="Enter second number" /></label>
         </div>
         <div className="action-row">
           <button className="operator" disabled={status === 'calculating'} onClick={() => calculate('add')}>Add <span>+</span></button>
