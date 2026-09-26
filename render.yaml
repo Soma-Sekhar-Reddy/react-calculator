@@ -8,4 +8,4 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: FRONTEND_URL
-        value: https://soma-sekhar-reddy.github.io/react-calculator
+        value: https://soma-sekhar-reddy.github.io
